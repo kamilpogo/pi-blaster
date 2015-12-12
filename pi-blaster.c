@@ -73,7 +73,7 @@ static uint8_t pin2gpio[8];
 #define PAGE_SIZE		4096
 #define PAGE_SHIFT		12
 
-// PERIOD_TIME_US is the period of the PWM signal in us.
+// CYCLE_TIME_US is the period of the PWM signal in us.
 // Typically it should be 20ms, or 20000us.
 
 // SAMPLE_US is the pulse width increment granularity, again in microseconds.
@@ -81,7 +81,7 @@ static uint8_t pin2gpio[8];
 // will use too much memory bandwidth.  10us is a good value, though you
 // might be ok setting it as low as 2us.
 
-#define CYCLE_TIME_US	10000
+#define CYCLE_TIME_US	6250
 #define SAMPLE_US		10
 #define NUM_SAMPLES		(CYCLE_TIME_US/SAMPLE_US)
 #define NUM_CBS			(NUM_SAMPLES*2)
