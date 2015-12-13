@@ -206,6 +206,19 @@ V revision (0-15)
 #define dprintf(...)
 #endif
 
+#define SYST_BASE_OFFSET 	0x3000
+#define SYST_BASE  			(periph_virt_base + SYST_BASE_OFFSET)
+#define SYST_PHYS_BASE  	(periph_phys_base + SYST_BASE_OFFSET)
+#define SYST_LEN  			0x1C
+#define SYST_CS				(0x00/4)
+#define SYST_CLO			(0x04/4)
+#define SYST_CHI			(0x08/4)
+#define SYST_C0				(0x0c/4)
+#define SYST_C1				(0x10/4)
+#define SYST_C2				(0x14/4)
+#define SYST_C3				(0x18/4)
+static volatile uint32_t *syst_reg;
+
 static struct {
 	int handle;		/* From mbox_open() */
 	unsigned mem_ref;	/* From mem_alloc() */
@@ -267,6 +280,10 @@ int mbox_open() {
 
 void mbox_close(int file_desc) {
   close(file_desc);
+}
+
+uint32_t get_sys_tick(void) {
+	return syst_reg[SYST_CLO];
 }
 
 static void
@@ -921,6 +938,41 @@ main(int argc, char **argv)
 	printf("Maximum period (100  %%):      %5dus\n", CYCLE_TIME_US);
 	printf("Minimum period (%1.3f%%):      %5dus\n", 100.0*SAMPLE_US / CYCLE_TIME_US, SAMPLE_US);
 	printf("DMA Base:                  %#010x\n", DMA_BASE);
+	uint32_t tick1 = get_sys_tick();
+	udelay(1000);
+	uint32_t tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
+	tick1 = get_sys_tick();
+	udelay(1000);
+	tick2 = get_sys_tick();
+	printf("Tick:                      %d\n", tick1);
+	printf("Tick:                      %d\n", tick2);
 
 	setup_sighandlers();
 
@@ -932,6 +984,7 @@ main(int argc, char **argv)
 	pcm_reg = map_peripheral(PCM_BASE, PCM_LEN);
 	clk_reg = map_peripheral(CLK_BASE, CLK_LEN);
 	gpio_reg = map_peripheral(GPIO_BASE, GPIO_LEN);
+	syst_reg = map_peripheral(SYST_BASE, SYST_LEN);
 
 	/* Use the mailbox interface to the VC to ask for physical memory */
 	mbox.mem_ref = mem_alloc(mbox.handle, NUM_PAGES * PAGE_SIZE, PAGE_SIZE, mem_flag);
